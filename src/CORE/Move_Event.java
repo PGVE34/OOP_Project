@@ -1,57 +1,45 @@
-package CORE;
+package src.CORE;
 
-import MODE.Individual;
+import src.MODE.Grid;
+import src.MODE.Individual;
+import src.MODE.Coordenadas;
+import java.util.List;
+import java.util.stream.Collectors;
 
-/**
- * Evento que move um indivíduo para a célula adjacente de maior conforto.
- */
 public class Move_Event implements Event_Strategy {
 
 	@Override
 	public void execute(Simulation_Context context, Individual individual) {
-		// Obtém a matriz de terreno (grid) diretamente como int[][]
-		int[][] grid = context.getGrid();
+		Grid grid = context.getGrid();
+		Coordenadas current = individual.getCurrentPosition();
 
-		// Posição atual
-		int x = individual.getX();
-		int y = individual.getY();
-		int bestX = x;
-		int bestY = y;
+		// Only consider moves to cells not already in the path
+		List<Coordenadas> validMoves = grid.getValidMoves(current).stream()
+				.filter(c -> !individual.getPath().contains(c))
+				.collect(Collectors.toList());
 
-		// Conforto na célula atual
-		double bestComfort = individual.getComfort(grid, context.getDestino(), context.getK());
+		if (!validMoves.isEmpty()) {
+			int n = validMoves.size();
+			double u = Math.random();
+			int idx = (int) Math.floor(u * n);
+			if (idx == n) idx = n - 1;
 
-		// Explora todas as 8 células adjacentes (incluindo diagonais)
-		for (int dx = -1; dx <= 1; dx++) {
-			for (int dy = -1; dy <= 1; dy++) {
-				if (dx == 0 && dy == 0) continue;
+			Coordenadas next = validMoves.get(idx);
+			individual.moveTo(next);
 
-				int newX = x + dx;
-				int newY = y + dy;
+			// Schedule next move
+			int tempoAtual = context.getTempoAtual();
+			int tempoMorte = individual.getDeathTime();
+			int tau = context.getTempoFinal();
 
-				// Verifica se (newX,newY) está dentro do grid (1..N)
-				if (newX >= 1 && newX <= context.getN() && newY >= 1 && newY <= context.getN()) {
-					// Move temporariamente para (newX,newY)
-					individual.setX(newX);
-					individual.setY(newY);
+			int delta = (int) Math.ceil(-Math.log(1 - Math.random()) * context.getDelta());
+			int proximoTempo = tempoAtual + delta;
 
-					// Calcula conforto nessa posição
-					double comfort = individual.getComfort(grid, context.getDestino(), context.getK());
-					if (comfort > bestComfort) {
-						bestComfort = comfort;
-						bestX = newX;
-						bestY = newY;
-					}
-
-					// Reverte para a posição original antes de testar outra direção
-					individual.setX(x);
-					individual.setY(y);
-				}
+			if (proximoTempo < tempoMorte && proximoTempo <= tau) {
+				Event proximoMove = context.getEventFactory().createMoveEvent(individual, proximoTempo);
+				context.getPEC().addEvent(proximoMove);
 			}
 		}
-
-		// Depois de testar todas as adjacências, move de facto para a melhor posição
-		individual.setX(bestX);
-		individual.setY(bestY);
+		// If no valid moves, do not schedule another move event
 	}
 }

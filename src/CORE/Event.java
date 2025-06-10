@@ -1,6 +1,6 @@
-package CORE;
+package src.CORE;
 
-import MODE.Individual;
+import src.MODE.Individual;
 
 public class Event implements Comparable<Event> {
 	private int time;

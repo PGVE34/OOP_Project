@@ -1,89 +1,70 @@
-package io;
+package src.io;
+
+import src.MODE.*;
 
 import java.util.List;
-import MODE.Coordenadas;
-import MODE.Special_Cost_Zone;
 
 public class SimulationParameters {
-    private int n;                       // Número de linhas do grid
-    private int m;                       // Número de colunas do grid
-    private int initialPopulation;
+    private int n;
+    private int m;
+    private Coordenadas start;
+    private Coordenadas goal;
+    private int tau;
+    private int nu;
+    private int nuMax;
     private int k;
-    private int destino;
-    private int totalTime;
-    private int[][] grid;               // Poderás setar isto se parser preencher
-    private List<Coordenadas> obstacles;
+    private double mu;
+    private double delta;
+    private double rho;
+
     private List<Special_Cost_Zone> costZones;
+    private List<Coordenadas> obstacles;
 
-    public int getN() {
-        return n;
-    }
-
-    public void setN(int n) {
+    public SimulationParameters(
+            int n, int m,
+            Coordenadas start, Coordenadas goal,
+            List<Special_Cost_Zone> costZones, List<Coordenadas> obstacles,
+            int tau, int nu, int nuMax, int k,
+            double mu, double delta, double rho
+    ) {
         this.n = n;
-    }
-
-    public int getM() {
-        return m;
-    }
-
-    public void setM(int m) {
         this.m = m;
-    }
-
-    public int getInitialPopulation() {
-        return initialPopulation;
-    }
-
-    public void setInitialPopulation(int initialPopulation) {
-        this.initialPopulation = initialPopulation;
-    }
-
-    public int getK() {
-        return k;
-    }
-
-    public void setK(int k) {
-        this.k = k;
-    }
-
-    public int getDestino() {
-        return destino;
-    }
-
-    public void setDestino(int destino) {
-        this.destino = destino;
-    }
-
-    public int getTotalTime() {
-        return totalTime;
-    }
-
-    public void setTotalTime(int totalTime) {
-        this.totalTime = totalTime;
-    }
-
-    public int[][] getGrid() {
-        return grid;
-    }
-
-    public void setGrid(int[][] grid) {
-        this.grid = grid;
-    }
-
-    public List<Coordenadas> getObstacles() {
-        return obstacles;
-    }
-
-    public void setObstacles(List<Coordenadas> obstacles) {
-        this.obstacles = obstacles;
-    }
-
-    public List<Special_Cost_Zone> getCostZones() {
-        return costZones;
-    }
-
-    public void setCostZones(List<Special_Cost_Zone> costZones) {
+        this.start = start;
+        this.goal = goal;
         this.costZones = costZones;
+        this.obstacles = obstacles;
+        this.tau = tau;
+        this.nu = nu;
+        this.nuMax = nuMax;
+        this.k = k;
+        this.mu = mu;
+        this.delta = delta;
+        this.rho = rho;
+    }
+
+    public int getN() { return n; }
+    public int getM() { return m; }
+    public Coordenadas getStartPoint() { return start; }
+    public Coordenadas getEndPoint() { return goal; }
+    public List<Special_Cost_Zone> getSpecialCostZones() { return costZones; }
+    public List<Coordenadas> getObstacles() { return obstacles; }
+    public int getTau() { return tau; }
+    public int getNu() { return nu; }
+    public int getNuMax() { return nuMax; }
+    public int getK() { return k; }
+    public double getMu() { return mu; }
+    public double getDelta() { return delta; }
+    public double getRho() { return rho; }
+
+    // Compatibility methods
+    public Coordenadas getDestino() { return goal; }
+    public Coordenadas getGoal() { return goal; }
+    public List<Special_Cost_Zone> getCostZones() { return costZones; }
+
+    public Grid buildGrid() {
+        Grid g = new Grid(n, m);
+        for (Coordenadas obs : obstacles) g.addObstacle(obs);
+        for (Special_Cost_Zone scz : costZones) g.addSpecialCostZone(scz);
+        return g;
     }
 }

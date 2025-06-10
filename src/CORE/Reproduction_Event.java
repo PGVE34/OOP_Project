@@ -1,7 +1,7 @@
-package CORE;
+package src.CORE;
 
-import MODE.Individual;
-import MODE.Coordenadas;
+import src.MODE.Individual;
+import src.MODE.Coordenadas;
 
 public class Reproduction_Event implements Event_Strategy {
 

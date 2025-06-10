@@ -1,8 +1,8 @@
-package CORE;
+package src.CORE;
 
-import MODE.Individual;
-import MODE.Grid;
-import MODE.Coordenadas;
+import src.MODE.Individual;
+import src.MODE.Grid;
+import src.MODE.Coordenadas;
 
 import java.util.*;
 import java.util.stream.Collectors;

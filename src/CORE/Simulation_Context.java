@@ -1,7 +1,10 @@
-package CORE;
+package src.CORE;
 
-import MODE.*;
-import io.*;
+import java.util.List;
+import src.MODE.Grid;
+import src.MODE.Coordenadas;
+import src.MODE.Individual;
+import src.io.SimulationParameters;
 
 public class Simulation_Context {
 	private Grid grid;
@@ -19,73 +22,29 @@ public class Simulation_Context {
 		this.eventFactory = new EventFactory();
 		this.tempoAtual = 0;
 	}
-	public void removeIndividual(Individual individual) {
-		// Remove o indivíduo da lista de população
-		population.remove(individual);}
 
-	public Grid getGrid() {
-		return grid;
-	}
+	public Grid getGrid() { return grid; }
+	public PEC getPEC() { return pec; }
+	public PopulationManager getPopulation() { return population; }
+	public SimulationParameters getParameters() { return parameters; }
+	public EventFactory getEventFactory() { return eventFactory; }
+	public int getTempoAtual() { return tempoAtual; }
+	public void setTempoAtual(int tempo) { this.tempoAtual = tempo; }
 
-	public PEC getPEC() {
-		return pec;
-	}
+	public Coordenadas getDestino() { return parameters.getEndPoint(); }
+	public int getK() { return parameters.getK(); }
+	public int getN() { return parameters.getN(); }
+	public int getM() { return parameters.getM(); }
+	public int getTempoFinal() { return parameters.getTau(); }
+	public double getMu() { return parameters.getMu(); }
+	public double getRho() { return parameters.getRho(); }
+	public double getDelta() { return parameters.getDelta(); }
 
-	public PopulationManager getPopulation() {
-		return population;
-	}
-
-	public SimulationParameters getParameters() {
-		return parameters;
-	}
-
-	public EventFactory getEventFactory() {
-		return eventFactory;
-	}
-
-	public int getTempoAtual() {
-		return tempoAtual;
-	}
-
-	public void setTempoAtual(int tempo) {
-		this.tempoAtual = tempo;
-	}
-
-	public Coordenadas getDestino() {
-		return parameters.getFinalPoint();
-	}
-
-	public int getK() {
-		return parameters.getK();
-	}
-
-	public int getTempoFinal() {
-		return parameters.getTau();
-	}
-
-	public double getMu() {
-		return parameters.getMu();
-	}
-
-	public double getRho() {
-		return parameters.getRho();
-	}
-
-	public double getDelta() {
-		return parameters.getDelta();
-	}
-
-	/**
-	 * Melhor indivíduo: se alguém chegou ao fim, devolve o de menor custo;
-	 * caso contrário, devolve o de maior conforto.
-	 */
 	public Individual getBestFitIndividual() {
 		Coordenadas destino = getDestino();
-		var all = population.getALL();
-
+		List<Individual> all = population.getALL();
 		Individual melhorComDestino = null;
 		int melhorCusto = Integer.MAX_VALUE;
-
 		for (Individual i : all) {
 			if (i.getLastPosition().equals(destino)) {
 				int custo = i.getCost(grid);
@@ -95,14 +54,12 @@ public class Simulation_Context {
 				}
 			}
 		}
-
 		if (melhorComDestino != null) return melhorComDestino;
-
-		// Caso ninguém tenha chegado ao destino, retorna o com maior conforto
 		return all.stream()
 				.max((a, b) -> Double.compare(
 						a.getComfort(grid, destino, getK()),
 						b.getComfort(grid, destino, getK())))
 				.orElse(null);
 	}
-}
+
+	}

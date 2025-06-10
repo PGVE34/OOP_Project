@@ -1,4 +1,4 @@
-package MODE;
+package src.MODE;
 
 import java.util.*;
 

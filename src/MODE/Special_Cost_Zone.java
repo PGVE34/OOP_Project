@@ -1,4 +1,4 @@
-package MODE;
+package src.MODE;
 
 public class Special_Cost_Zone {
 	private Coordenadas cantoInferior;
@@ -23,23 +23,22 @@ public class Special_Cost_Zone {
 		return cantoSuperior;
 	}
 
-	/**
-	 * Verifica se uma aresta (from → to) está no perímetro da zona especial.
-	 * Assume que from e to são adjacentes.
-	 */
+	// Add these for compatibility with the rest of the codebase
+	public Coordenadas getInf() {
+		return getCantoInferior();
+	}
+
+	public Coordenadas getSup() {
+		return getCantoSuperior();
+	}
+
 	public boolean afetaAresta(Coordenadas from, Coordenadas to) {
-		// Primeiro garantimos que são adjacentes
 		if (Math.abs(from.getX() - to.getX()) + Math.abs(from.getY() - to.getY()) != 1) {
 			return false;
 		}
-
-		// Verifica se ambos os pontos estão no perímetro do retângulo
 		return isOnPerimeter(from) && isOnPerimeter(to);
 	}
 
-	/**
-	 * Verifica se a coordenada está exatamente no perímetro do retângulo da zona especial.
-	 */
 	private boolean isOnPerimeter(Coordenadas c) {
 		int x = c.getX();
 		int y = c.getY();

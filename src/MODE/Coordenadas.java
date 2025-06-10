@@ -1,4 +1,4 @@
-package MODE;
+package src.MODE;
 
 /**
  * Representa um ponto no plano (i.e., numa célula da grelha).
